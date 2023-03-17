@@ -619,7 +619,6 @@
 
         .sentText {
             margin: 0px auto;
-            min-width: 100%;
             display: block;
             font-size: 16px;
             line-height: 19px;
@@ -757,7 +756,7 @@
         const socket = io()
 
         socket.on('message',(message)=>[
-            createMessage(message,false)
+           setTimeout(createMessage(message,false),2000)
         ])
 
 
@@ -785,16 +784,17 @@
             newMessage.classList.add(isUser ? 'sentText' : 'botText');
             newMessage.innerHTML = message;
             chatMessages.appendChild(newMessage);
+            newMessage.scrollIntoView()
             return newMessage;
         }
 
-        function chatbotResponse() {
-            const messages = ["Hello!", "How can I assist you?", "Let me know if you have any further questions"];
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            const message = messages[randomIndex];
-            const botMessage = createMessage(message, false);
-            botMessage.scrollIntoView();
-        }
+        // function chatbotResponse() {
+        //     const messages = ["Hello!", "How can I assist you?", "Let me know if you have any further questions"];
+        //     const randomIndex = Math.floor(Math.random() * messages.length);
+        //     const message = messages[randomIndex];
+        //     const botMessage = createMessage(message, false);
+        //     botMessage.scrollIntoView();
+        // }
 
         chatInput.addEventListener("input", function (event) {
             if (event.target.value) {
@@ -810,7 +810,8 @@
                 chatInput.value = "";
                 const userMessage = createMessage(message);
                 userMessage.scrollIntoView();
-                setTimeout(chatbotResponse, 1000);
+                socket.emit('reply',message)
+                // setTimeout(chatbotResponse, 1000);
                 sendButton.classList.add("svgsent");
             }
         });
@@ -821,7 +822,8 @@
                 chatInput.value = "";
                 const userMessage = createMessage(message);
                 userMessage.scrollIntoView();
-                setTimeout(chatbotResponse, 1000);
+                socket.emit('reply',message)
+                // setTimeout(chatbotResponse, 1000);
                 sendButton.classList.add("svgsent");
             });
         }

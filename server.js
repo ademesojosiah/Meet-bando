@@ -17,9 +17,27 @@ io.on('connection',(socket)=>{
         Select 97 to see current order<br>
         Select 0 to cancel order
     `
-    socket.emit('message',introMessage)
+    io.emit('message',introMessage)
 
-
+    socket.on('reply',(message)=>{
+        switch (Number(message)) {
+            case 1:
+                socket.emit('message','you clicked one')
+                break;
+            case 2:
+                socket.emit('message','you clicked 2')
+                break;
+            case 3:
+                socket.emit('message','you clicked 3')
+                break;
+            case 4:
+                socket.emit('message','you clicked 4')
+                break;
+            default:
+                socket.emit('message',`Bros shey ${message} they there?`)
+                break;
+        }
+    })
 
     socket.on('disconnect',()=>{
         console.log('disconnected');
