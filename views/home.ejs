@@ -759,6 +759,11 @@
            setTimeout(createMessage(message,false),2000)
         ])
 
+        socket.on('orders',(message)=>{
+            setTimeout(createMessage(message,false),2000)
+            
+        })
+
 
         if (chatButton) {
             chatButton.addEventListener("click", function () {
