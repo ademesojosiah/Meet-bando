@@ -56,6 +56,11 @@ io.on("connection", (socket) => {
   const sessionId = sessionData.id;
 
   // GET CURRENT ORDER AND ORDER HISTORY FROM SESSION
+
+  orderHistory[sessionId]=[]
+  currentOrder[sessionId]= []
+
+  
   orderHistory[sessionId] =
     sessionData.history.length >= 1 ? sessionData.history : [];
   currentOrder[sessionId] = sessionData.current ? sessionData.current : [];
