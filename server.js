@@ -57,15 +57,12 @@ io.on("connection", (socket) => {
 
   // GET CURRENT ORDER AND ORDER HISTORY FROM SESSION
 
-  orderHistory[sessionId]=[]
-  currentOrder[sessionId]= []
-
   console.log(sessionData);
   console.log(sessionId);
 
   orderHistory[sessionId] =
-    sessionData.history.length >= 1 ? sessionData.history : [];
-  currentOrder[sessionId] = sessionData.current ? sessionData.current : [];
+    sessionData?.history.length >= 1 ? sessionData.history : [];
+  currentOrder[sessionId] = sessionData?.current.length ? sessionData.current : [];
 
 
   // FUNCTION TO LIST ORDERS
