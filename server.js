@@ -60,13 +60,13 @@ io.on("connection", (socket) => {
   orderHistory[sessionId]=[]
   currentOrder[sessionId]= []
 
-  
+  console.log(sessionData);
+  console.log(sessionId);
+
   orderHistory[sessionId] =
     sessionData.history.length >= 1 ? sessionData.history : [];
   currentOrder[sessionId] = sessionData.current ? sessionData.current : [];
 
-  console.log(sessionData);
-  console.log(sessionId);
 
   // FUNCTION TO LIST ORDERS
   function getOrderList(array) {
