@@ -57,8 +57,6 @@ io.on("connection", (socket) => {
 
   // GET CURRENT ORDER AND ORDER HISTORY FROM SESSION
 
-  console.log(sessionData);
-  console.log(sessionId);
 
   // CHECKING IF DATA EXIST IN SESSION
   orderHistory[sessionId] =
@@ -237,7 +235,6 @@ io.on("connection", (socket) => {
 function save(sessionData, sessionId) {
   sessionData.current = currentOrder[sessionId];
   sessionData.history = orderHistory[sessionId];
-  console.log("save", sessionData);
   sessionData.save();
 }
 
