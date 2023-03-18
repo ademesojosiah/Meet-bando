@@ -60,19 +60,18 @@ io.on("connection", (socket) => {
   console.log(sessionData);
   console.log(sessionId);
 
- 
-
-  // CHECKING IF DATA EXIST IN SESSION 
+  // CHECKING IF DATA EXIST IN SESSION
   orderHistory[sessionId] =
-    (sessionData.history && sessionData.history.length >= 1) ? sessionData.history : [];
-  currentOrder[sessionId] = (sessionData.current && sessionData.current.length >= 1 ) ? sessionData.current : []; 
-
-
-
+    sessionData.history && sessionData.history.length >= 1
+      ? sessionData.history
+      : [];
+  currentOrder[sessionId] =
+    sessionData.current && sessionData.current.length >= 1
+      ? sessionData.current
+      : [];
 
   // FUNCTION TO LIST ORDERS
   function getOrderList(array) {
-
     //CHECK IF PARAMETER IS AN INSTANCE OF AN ARRAY
     if (array instanceof Array) {
       const listOfOrder = array
@@ -154,11 +153,19 @@ io.on("connection", (socket) => {
         socket.emit("message", introMessage);
         break;
       case 0:
-        currentOrder[sessionId]= []
-        orderHistory[sessionId]= []
-        save(sessionData, sessionId)
+        if (
+          (currentOrder[sessionId].length = 1) &&
+          (orderHistory[sessionId].length = 1)
+        ) {
+          socket.emit("message", "No Order was placed");
+          socket.emit("message", introMessage);
+        }else{
+        currentOrder[sessionId] = [];
+        orderHistory[sessionId] = [];
+        save(sessionData, sessionId);
         socket.emit("message", "Order Cancelled");
         socket.emit("message", introMessage);
+        }
         break;
       default:
         socket.emit("message", `${message} is an invalid input , try again`);
