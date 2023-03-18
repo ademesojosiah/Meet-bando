@@ -154,8 +154,8 @@ io.on("connection", (socket) => {
         break;
       case 0:
         if (
-          (currentOrder[sessionId].length = 1) &&
-          (orderHistory[sessionId].length = 1)
+          (!currentOrder[sessionId].length) &&
+          (!orderHistory[sessionId].length)
         ) {
           socket.emit("message", "No Order was placed");
           socket.emit("message", introMessage);
