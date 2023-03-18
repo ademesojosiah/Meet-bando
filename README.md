@@ -21,8 +21,6 @@
 <div>
   <p align="center">
     <a href="https://github.com/ademesojosiah/Meet-bando#readme"><strong>Docs »</strong></a>
-    <br />
-    <br />
     <a href="https://bando.onrender.com">Demo</a>
   </p>
 </div>
@@ -136,8 +134,8 @@ https://bando.onrender.com/
 
 ## Contact
 
-- Twitter - [@kachi_oz](https://twitter.com/kachi_oz)
-- email - [astrokachi@gmail.com]
+- Twitter - [@josiahademeso](https://twitter.com/JosiahAdemeso)
+- email - [josiahademeso@gmail.com]
 
 
 <p align="right"><a href="#readme-top">back to top</a></p>
