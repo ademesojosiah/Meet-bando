@@ -60,13 +60,20 @@ io.on("connection", (socket) => {
   console.log(sessionData);
   console.log(sessionId);
 
+ 
+
+  // CHECKING IF DATA EXIST IN SESSION 
   orderHistory[sessionId] =
-    sessionData?.history.length >= 1 ? sessionData.history : [];
-  currentOrder[sessionId] = sessionData?.current.length ? sessionData.current : [];
+    (sessionData.history && sessionData.history.length >= 1) ? sessionData.history : [];
+  currentOrder[sessionId] = (sessionData.current && sessionData.current.length >= 1 ) ? sessionData.current : []; 
+
+
 
 
   // FUNCTION TO LIST ORDERS
   function getOrderList(array) {
+
+    //CHECK IF PARAMETER IS AN INSTANCE OF AN ARRAY
     if (array instanceof Array) {
       const listOfOrder = array
         .map((order, i) => `${i + 1}. ${order}<br>`)
