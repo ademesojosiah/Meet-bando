@@ -17,19 +17,23 @@ store.on("error", function (error) {
   console.log(error);
 });
 
+//SESSION MIDDLEWARE
 const BandoSess = session({
   secret: "a secret",
-  saveUninitialized: true,
+  saveUninitialized: false,
   resave: true,
   name: "BandoSess",
   store: store,
   cookie: {
     secure: false,
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    expires: 1000 * 60 * 60 * 24 * 7,
+    sameSite: "none",
   },
 });
+
 app.use(BandoSess);
+
 io.engine.use(BandoSess);
 
 app.set("view engine", "ejs");
@@ -39,14 +43,39 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-let orders = [];
+// CURRENT ORDER AND ORDER HISTORY
+const currentOrder = {};
+const orderHistory = {};
+
 io.on("connection", (socket) => {
   console.log("connected to socket");
+  //GET DATA FROM SESSION
   const sessionData = socket.request.session;
 
-  function getOrderHistory(array) {}
+  //GET SESSION ID
+  const sessionId = sessionData.id;
 
+  // GET CURRENT ORDER AND ORDER HISTORY FROM SESSION
+  orderHistory[sessionId] =
+    sessionData.history.length >= 1 ? sessionData.history : [];
+  currentOrder[sessionId] = sessionData.current ? sessionData.current : [];
+
+  console.log(sessionData);
+  console.log(sessionId);
+
+  // FUNCTION TO LIST ORDERS
+  function getOrderList(array) {
+    if (array instanceof Array) {
+      const listOfOrder = array
+        .map((order, i) => `${i + 1}. ${order}<br>`)
+        .join("");
+      return listOfOrder;
+    } else {
+      return array;
+    }
+  }
   const introMessage = `
+            How can i help you today ?<br>
             Select 1 to Place an order<br>
             Select 99 to checkout order<br>
             Select 98 to see order history<br>
@@ -64,14 +93,15 @@ io.on("connection", (socket) => {
         `;
 
   const orderMessage = `
-           1. Bread and beans<br>
-           2. Rice and chicken<br>
-           3. Shawarma and hollandia yogurt<br>
-           4. Amala and Ewedu<br>
-           5. Pounded yam and egusi<br>
-           6. fufu and efo riro<br>
-           7. Yam and egg<br>
-           8. Beans and Yam
+          select 1. Bread and beans<br>
+          select 2. Rice and chicken<br>
+          select 3. Shawarma and hollandia yogurt<br>
+          select 4. Amala and Ewedu<br>
+          select 5. Pounded yam and egusi<br>
+          select 6. fufu and efo riro<br>
+          select 7. Yam and egg<br>
+          select 8. Beans and Yam<br>
+          select 0. TO GO BACK
         `;
   socket.emit("message", introMessage);
 
@@ -81,20 +111,45 @@ io.on("connection", (socket) => {
         socket.emit("orders", orderMessage);
         break;
       case 99:
-        socket.emit("message");
+        // CURRENT ORDER WILL BE MOVED TO ORDER HISTORY
+        if (currentOrder[sessionId].length >= 1) {
+          orderHistory[sessionId] = currentOrder[sessionId];
+          socket.emit("message", "Your Order has been placed");
+        } else {
+          socket.emit(
+            "message",
+            "You have no pending checkout, place an Order"
+          );
+        }
+        save(sessionData, sessionId);
+        socket.emit("message", introMessage);
         break;
       case 98:
-        console.log(socket.request.session);
-        console.log(socket.request.session.usersOrders);
-        orders = sessionData.usersOrders.length > 1 ? sessionData.usersOrders : ' no order has been placed yet';
-        socket.emit("message", `${JSON.stringify(orders)}<br>`);
+        // CHECK IF ORDER HISTORY IS EMPTY AND DISPLAY NO ORDER PLACED
+        const checkOrderHistory =
+          getOrderList(orderHistory[sessionId]).length >= 1
+            ? getOrderList(orderHistory[sessionId])
+            : "No Order placed";
+
+        socket.emit("message", checkOrderHistory);
         socket.emit("message", introMessage);
         break;
       case 97:
-        socket.emit("message", "you clicked 4");
+        // CHECK IF ORDER HISTORY IS EMPTY AND DISPLAY NO ORDER PLACED
+        const checkCurrentOrder =
+          getOrderList(currentOrder[sessionId]).length >= 1
+            ? getOrderList(currentOrder[sessionId])
+            : "No Current Order";
+
+        socket.emit("message", checkCurrentOrder);
+        socket.emit("message", introMessage);
         break;
       case 0:
-        socket.emit("message", "you clicked 4");
+        currentOrder[sessionId]= []
+        orderHistory[sessionId]= []
+        save(sessionData, sessionId)
+        socket.emit("message", "Order Cancelled");
+        socket.emit("message", introMessage);
         break;
       default:
         socket.emit("message", `${message} is an invalid input , try again`);
@@ -103,63 +158,72 @@ io.on("connection", (socket) => {
     }
   });
 
-  sessionData.usersOrders = [];
-
   socket.on("newOrders", (message) => {
     switch (Number(message)) {
       case 1:
-        sessionData.usersOrders.push("Bread and beans<br>");
-        socket.request.session.save();
+        currentOrder[sessionId].push("Bread and beans");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 2:
-        sessionData.usersOrders.push("Rice and chicken<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Rice and chicken");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 3:
-        sessionData.usersOrders.push("Shawarma and hollandia yogurt<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Shawarma and hollandia yogurt");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 4:
-        sessionData.usersOrders.push("Amala and Ewedu<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Amala and Ewedu");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 5:
-        sessionData.usersOrders.push("Pounded yam and egusi<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Pounded yam and egusi");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 6:
-        sessionData.usersOrders.push("fufu and efo riro<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("fufu and efo riro");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 7:
-        sessionData.usersOrders.push("Yam and egg<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Yam and egg");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
         break;
       case 8:
-        sessionData.usersOrders.push("Beans and Yam<br>");
-        sessionData.save();
+        currentOrder[sessionId].push("Beans and Yam");
+        save(sessionData, sessionId);
         socket.emit("message", secondIntroMessage);
+        break;
+      case 0:
+        socket.emit("message", introMessage);
         break;
       default:
         socket.emit("message", `${message} is an invalid input , try again`);
-        socket.emit("message", orderMessage);
+        socket.emit("orders", orderMessage);
         break;
     }
   });
 
   socket.on("disconnect", () => {
-    socket.request.session.save();
+    currentOrder[sessionId] = [];
+    save(sessionData, sessionId);
     console.log("disconnected");
-
   });
 });
+
+//FUNCTION TO UPDATE SESSION
+function save(sessionData, sessionId) {
+  sessionData.current = currentOrder[sessionId];
+  sessionData.history = orderHistory[sessionId];
+  console.log("save", sessionData);
+  sessionData.save();
+}
 
 server.listen(3003, () => {
   console.log("server is running.......");

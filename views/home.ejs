@@ -756,7 +756,8 @@
         const socket = io()
 
         let firstStage = true
-
+    
+        // LISTEN TO EVENTS
         socket.on('message',(message)=>{
            setTimeout(createMessage,500,message,false)
            firstStage = true
