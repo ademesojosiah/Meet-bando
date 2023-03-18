@@ -154,17 +154,17 @@ io.on("connection", (socket) => {
         break;
       case 0:
         if (
-          (!currentOrder[sessionId].length) &&
-          (!orderHistory[sessionId].length)
+          !currentOrder[sessionId].length &&
+          !orderHistory[sessionId].length
         ) {
           socket.emit("message", "No Order was placed");
           socket.emit("message", introMessage);
-        }else{
-        currentOrder[sessionId] = [];
-        orderHistory[sessionId] = [];
-        save(sessionData, sessionId);
-        socket.emit("message", "Order Cancelled");
-        socket.emit("message", introMessage);
+        } else {
+          currentOrder[sessionId] = [];
+          orderHistory[sessionId] = [];
+          save(sessionData, sessionId);
+          socket.emit("message", "Order Cancelled");
+          socket.emit("message", introMessage);
         }
         break;
       default:
