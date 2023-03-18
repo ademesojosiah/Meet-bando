@@ -654,7 +654,7 @@
         }
 
         .center-baba h1{
-            padding: 15px 24px;
+            padding: 17px 28px;
             font-size: 1.7rem;
             background:linear-gradient(-61deg, rgb(0, 224, 216), rgb(32, 29, 142));
             color: #f2f9ff;
@@ -672,7 +672,7 @@
     </style>
      <!---Chat Board Start-->
      <div class="center-baba">
-        <h1 class="main-intro">HELLO!<br> Meet <span class="bando"><strong>Bando</strong></span> your virtual assistant </h1>
+        <h1 class="main-intro">HELLO! welcome to Bitez<br> Meet <span class="bando"><strong>Bando</strong></span> your virtual assistant </h1>
      </div>
 <div class="chat-board chatbot chat new trending"></div>
 <div class="frame-content">
@@ -755,13 +755,16 @@
 
         const socket = io()
 
-        socket.on('message',(message)=>[
-           setTimeout(createMessage(message,false),2000)
-        ])
+        let firstStage = true
+
+        socket.on('message',(message)=>{
+           setTimeout(createMessage,500,message,false)
+           firstStage = true
+        })
 
         socket.on('orders',(message)=>{
-            setTimeout(createMessage(message,false),2000)
-            
+            setTimeout(createMessage,500,message,false)
+            firstStage = false
         })
 
 
@@ -815,9 +818,13 @@
                 chatInput.value = "";
                 const userMessage = createMessage(message);
                 userMessage.scrollIntoView();
-                socket.emit('reply',message)
+                sendButton.classList.remove("svgsent");
+                if(firstStage){
+                    socket.emit('reply',message)  
+                }else{
+                    socket.emit('newOrders',message)
+                }
                 // setTimeout(chatbotResponse, 1000);
-                sendButton.classList.add("svgsent");
             }
         });
 
@@ -827,9 +834,14 @@
                 chatInput.value = "";
                 const userMessage = createMessage(message);
                 userMessage.scrollIntoView();
-                socket.emit('reply',message)
+                sendButton.classList.remove("svgsent");
+                if(firstStage){
+                    socket.emit('reply',message)  
+                }else{
+                    socket.emit('newOrders',message)
+                }
                 // setTimeout(chatbotResponse, 1000);
-                sendButton.classList.add("svgsent");
+                
             });
         }
 
