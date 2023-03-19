@@ -25,7 +25,7 @@ const BandoSess = session({
   name: "BandoSess",
   store: store,
   cookie: {
-    secure: false,
+    secure: true,
     httpOnly: true,
     expires: 1000 * 60 * 60 * 24 * 7,
     sameSite: "none",
