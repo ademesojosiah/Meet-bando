@@ -25,7 +25,7 @@
   </p>
 </div>
 
-# RESTAURANT CHATBOT 
+# MEET BANDO IS A RESTAURANT CHATBOT 
 
 
 
