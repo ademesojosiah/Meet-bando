@@ -787,20 +787,24 @@
 
         const socket = io()
 
+        //STATE MANAGEMENT
         let firstStage = true
     
-        // LISTEN TO EVENTS
+        // LISTEN TO INTRODUCTION EVENTS
         socket.on('message',(message)=>{
            setTimeout(createMessage,200,message,false)
            firstStage = true
         })
 
+
+        // LISTEN TO LIST OF ORDERS EVENTS
         socket.on('orders',(message)=>{
             setTimeout(createMessage,200,message,false)
             firstStage = false
         })
 
 
+        // SHOW CHAT FRAME
         if (chatButton) {
             chatButton.addEventListener("click", function () {
                 if (chatContainer) {
@@ -812,6 +816,8 @@
             });
         }
 
+
+        // HIDE CHAT FRAME
         if (minimizeButton) {
             minimizeButton.addEventListener("click", function () {
                 if (chatContainer) {
