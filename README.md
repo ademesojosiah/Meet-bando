@@ -51,7 +51,7 @@
 #### A fully functional chatbot written in javascript designed to take your orders, respond and store them 
 
 
-An interface is designed in a user friendly chat style for users choose from a list of commands and get response accordingly. The menu is as listed below:
+A user-friendly chat-style interface is created so that users can select from a menu of commands and receive responses in line with their selections. The menu is as listed below:
  
 * Place an order (1):
    A list of food items currently available is displayed to the user to select from. After selecting a food item, the main menu is returned back as well as a confirmation that the last order was received. A user may then decide to choose another item if he/she wishes to.
@@ -67,7 +67,7 @@ An interface is designed in a user friendly chat style for users choose from a l
    While placing orders, they are stored temporarily so that users can see their current orders. This option returns the current order that hasn't been checkedout yet.
 
 * Cancel order (0):
-   This option clears the current order memory thereby removing all orders that haven't been checked out.
+   This option clears the current order memory and the orders that have been checked out.
 
 
 
@@ -106,8 +106,6 @@ or
 ```sh
 yarn install
 ```
-
-#### Update .env with [example.env](/example.env)
 
 #### Run a development server
 
